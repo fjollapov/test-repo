@@ -122,6 +122,11 @@
             margin-bottom: 20px;
         }
 
+        .char-count.exceeded {
+            color: #ff3b30;
+            font-weight: 600;
+        }
+
         .media-upload-area {
             border: 2px dashed #d1d1d6;
             border-radius: 12px;
@@ -736,6 +741,174 @@
             font-size: 15px;
             font-weight: 500;
         }
+
+        /* Templates Button */
+        .templates-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border: 1px solid #e5e5e7;
+            border-radius: 10px;
+            background: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .templates-btn:hover {
+            border-color: #007aff;
+            background: #f0f7ff;
+        }
+
+        .templates-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Templates Screen */
+        .templates-screen {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        .templates-screen.show {
+            display: flex;
+        }
+
+        .templates-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e5e7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .templates-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1d1d1f;
+        }
+
+        .templates-count {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        .templates-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .template-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #e5e5e7;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-item:hover {
+            border-color: #007aff;
+            background: #f0f7ff;
+        }
+
+        .template-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .template-icon.facebook {
+            background: #1877f2;
+            color: white;
+        }
+
+        .template-icon.instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+        }
+
+        .template-icon.twitter {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .template-icon.linkedin {
+            background: #0077b5;
+            color: white;
+        }
+
+        .template-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .template-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1d1d1f;
+        }
+
+        .template-date {
+            font-size: 13px;
+            color: #86868b;
+        }
+
+        .template-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f5f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .template-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .template-item.selected-template {
+            border-color: #007aff;
+            background: #f0f7ff;
+        }
     </style>
 </head>
 <body>
@@ -749,6 +922,15 @@
             </div>
 
             <div class="setup-section">
+                <button class="templates-btn" onclick="showTemplatesScreen()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Templates
+                </button>
                 <div class="section-title">Post Content</div>
                 <textarea class="text-input" id="global-text" placeholder="Type your message..." oninput="updateCharCount()">Check out our latest product launch! 🚀</textarea>
                 <div class="char-count" id="char-count">0 / 500</div>
@@ -824,11 +1006,8 @@
             </div>
 
             <div class="customization-container">
-                <div class="network-tabs">
-                    <button class="network-tab active" onclick="switchNetworkTab('facebook', this)">Facebook</button>
-                    <button class="network-tab" onclick="switchNetworkTab('instagram', this)">Instagram</button>
-                    <button class="network-tab" onclick="switchNetworkTab('twitter', this)">Twitter</button>
-                    <button class="network-tab" onclick="switchNetworkTab('linkedin', this)">LinkedIn</button>
+                <div class="network-tabs" id="network-tabs">
+                    <!-- Tabs will be dynamically generated based on selected networks -->
                 </div>
 
                 <div class="customization-content">
@@ -862,8 +1041,8 @@
                         </div>
 
                         <div class="section-title">Post Text</div>
-                        <textarea class="custom-input" id="input-facebook" oninput="updatePreview('facebook')">Check out our latest product launch! 🚀</textarea>
-                        <div class="char-count" style="margin-top: -12px; margin-bottom: 20px;">0 / 5000</div>
+                        <textarea class="custom-input" id="input-facebook" oninput="updatePreview('facebook'); updateNetworkCharCount('facebook', 5000)">Check out our latest product launch! 🚀</textarea>
+                        <div class="char-count" id="char-count-facebook" style="margin-top: -12px; margin-bottom: 20px;">0 / 5000</div>
                     </div>
 
                     <!-- Instagram Panel -->
@@ -897,8 +1076,8 @@
                         </div>
 
                         <div class="section-title">Caption</div>
-                        <textarea class="custom-input" id="input-instagram" oninput="updatePreview('instagram')">Check out our latest product launch! 🚀</textarea>
-                        <div class="char-count" style="margin-top: -12px; margin-bottom: 20px;">0 / 2200</div>
+                        <textarea class="custom-input" id="input-instagram" oninput="updatePreview('instagram'); updateNetworkCharCount('instagram', 2200)">Check out our latest product launch! 🚀</textarea>
+                        <div class="char-count" id="char-count-instagram" style="margin-top: -12px; margin-bottom: 20px;">0 / 2200</div>
                     </div>
 
                     <!-- Twitter Panel -->
@@ -932,8 +1111,8 @@
                         </div>
 
                         <div class="section-title">Tweet</div>
-                        <textarea class="custom-input" id="input-twitter" oninput="updatePreview('twitter')">Check out our latest product launch! 🚀</textarea>
-                        <div class="char-count" style="margin-top: -12px; margin-bottom: 20px;">0 / 280</div>
+                        <textarea class="custom-input" id="input-twitter" oninput="updatePreview('twitter'); updateNetworkCharCount('twitter', 280)">Check out our latest product launch! 🚀</textarea>
+                        <div class="char-count" id="char-count-twitter" style="margin-top: -12px; margin-bottom: 20px;">0 / 280</div>
                     </div>
 
                     <!-- LinkedIn Panel -->
@@ -966,8 +1145,8 @@
                         </div>
 
                         <div class="section-title">Post Text</div>
-                        <textarea class="custom-input" id="input-linkedin" oninput="updatePreview('linkedin')">Check out our latest product launch! 🚀</textarea>
-                        <div class="char-count" style="margin-top: -12px; margin-bottom: 20px;">0 / 3000</div>
+                        <textarea class="custom-input" id="input-linkedin" oninput="updatePreview('linkedin'); updateNetworkCharCount('linkedin', 3000)">Check out our latest product launch! 🚀</textarea>
+                        <div class="char-count" id="char-count-linkedin" style="margin-top: -12px; margin-bottom: 20px;">0 / 3000</div>
                     </div>
                 </div>
             </div>
@@ -993,6 +1172,62 @@
                 </div>
             </div>
         </div>
+
+        <!-- Templates Screen -->
+        <div class="templates-screen" id="templates-screen">
+            <div class="templates-header">
+                <div>
+                    <div class="templates-title">Templates</div>
+                    <div class="templates-count">219 Entries</div>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <button class="header-btn" onclick="closeTemplatesScreen()">Cancel</button>
+                    <button class="header-btn primary" onclick="applyTemplate()">Apply</button>
+                </div>
+            </div>
+            <div class="templates-list" id="templates-list">
+                <div class="template-item" onclick="selectTemplate(this, 'kejdnkjnkjdnekjdnkjefwa', 'Facebook', 'Exciting news! We just launched our new product line. Check it out now! 🎉')">
+                    <div class="template-icon facebook">f</div>
+                    <div class="template-content">
+                        <div class="template-title">kejdnkjnkjdnekjdnkjefwa</div>
+                        <div class="template-date">Created 07/11/2025</div>
+                    </div>
+                    <div class="template-thumbnail"></div>
+                </div>
+                <div class="template-item" onclick="selectTemplate(this, 'Test Mail Notification', 'Facebook', 'Don\'t miss out on our latest updates! Subscribe to our newsletter for exclusive content.')">
+                    <div class="template-icon facebook">f</div>
+                    <div class="template-content">
+                        <div class="template-title">Test Mail Notification</div>
+                        <div class="template-date">Created 29/07/2025</div>
+                    </div>
+                    <div class="template-thumbnail"></div>
+                </div>
+                <div class="template-item" onclick="selectTemplate(this, 'test new template', 'Facebook', 'Check out our latest product launch! 🚀 Get 20% off your first order with code LAUNCH20')">
+                    <div class="template-icon facebook">f</div>
+                    <div class="template-content">
+                        <div class="template-title">test new template</div>
+                        <div class="template-date">Created 08/01/2025</div>
+                    </div>
+                    <div class="template-thumbnail">📷</div>
+                </div>
+                <div class="template-item" onclick="selectTemplate(this, 'Test "carousel" instagram', 'Instagram', 'Swipe to see our amazing collection! ✨ Which one is your favorite? #NewCollection #Style')">
+                    <div class="template-icon instagram">📷</div>
+                    <div class="template-content">
+                        <div class="template-title">Test "carousel" instagram</div>
+                        <div class="template-date">Created 04/11/2024</div>
+                    </div>
+                    <div class="template-thumbnail">📷</div>
+                </div>
+                <div class="template-item" onclick="selectTemplate(this, 'Test reel 1', 'Instagram', 'Behind the scenes! 🎬 Check out how we create our products. Follow for more!')">
+                    <div class="template-icon instagram">📷</div>
+                    <div class="template-content">
+                        <div class="template-title">Test reel 1</div>
+                        <div class="template-date">Created 10/10/2024</div>
+                    </div>
+                    <div class="template-thumbnail">📷</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1002,18 +1237,148 @@
                 screen.classList.remove('active');
             });
             document.getElementById(screenId).classList.add('active');
+            
+            // Update customize screen tabs when navigating to it
+            if (screenId === 'screen-customize') {
+                updateCustomizeScreenTabs();
+            }
         }
 
         // Character count update
         function updateCharCount() {
             const text = document.getElementById('global-text').value;
             const count = text.length;
-            document.getElementById('char-count').textContent = `${count} / 500`;
+            const charCountEl = document.getElementById('char-count');
+            charCountEl.textContent = `${count} / 500`;
+            
+            // Show red if exceeded
+            if (count > 500) {
+                charCountEl.classList.add('exceeded');
+            } else {
+                charCountEl.classList.remove('exceeded');
+            }
+        }
+
+        // Templates screen functions
+        let selectedTemplate = null;
+
+        function showTemplatesScreen() {
+            document.getElementById('templates-screen').classList.add('show');
+        }
+
+        function closeTemplatesScreen() {
+            document.getElementById('templates-screen').classList.remove('show');
+            selectedTemplate = null;
+            // Remove selection
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.remove('selected-template');
+            });
+        }
+
+        function selectTemplate(element, title, platform, content) {
+            // Remove previous selection
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.remove('selected-template');
+            });
+            
+            // Add selection to clicked item
+            element.classList.add('selected-template');
+            selectedTemplate = { title, platform, content };
+            
+            // Immediately fill the post with template content
+            fillPostWithTemplate(content);
+        }
+
+        function fillPostWithTemplate(content) {
+            // Fill the post text
+            const textInput = document.getElementById('global-text');
+            textInput.value = content;
+            updateCharCount();
+            
+            // Update all network inputs if they're not overridden
+            document.querySelectorAll('.network-panel').forEach(panel => {
+                const network = panel.id.replace('panel-', '');
+                const toggle = panel.querySelector('.toggle-switch');
+                if (!toggle.classList.contains('active')) {
+                    // Not overridden, update from global text
+                    const input = document.getElementById(`input-${network}`);
+                    if (input) {
+                        input.value = content;
+                        const maxLength = network === 'facebook' ? 5000 : network === 'instagram' ? 2200 : network === 'twitter' ? 280 : 3000;
+                        updateNetworkCharCount(network, maxLength);
+                    }
+                }
+            });
+            
+            // Update all network previews
+            updatePreview('facebook');
+            updatePreview('instagram');
+            updatePreview('twitter');
+            updatePreview('linkedin');
+        }
+
+        function applyTemplate() {
+            if (selectedTemplate) {
+                // Post is already filled when template is selected
+                // Just close the templates screen
+                closeTemplatesScreen();
+            }
+        }
+
+        // Update character count for network-specific inputs
+        function updateNetworkCharCount(network, maxLength) {
+            const input = document.getElementById(`input-${network}`);
+            const charCountEl = document.getElementById(`char-count-${network}`);
+            const count = input.value.length;
+            charCountEl.textContent = `${count} / ${maxLength}`;
+            
+            // Show red if exceeded
+            if (count > maxLength) {
+                charCountEl.classList.add('exceeded');
+            } else {
+                charCountEl.classList.remove('exceeded');
+            }
         }
 
         // Network selection toggle
         function toggleNetwork(card) {
             card.classList.toggle('selected');
+            updateCustomizeScreenTabs();
+        }
+
+        // Update customize screen tabs based on selected networks
+        function updateCustomizeScreenTabs() {
+            const selectedNetworks = [];
+            document.querySelectorAll('#screen-setup .network-card.selected').forEach(card => {
+                if (card.classList.contains('facebook')) {
+                    selectedNetworks.push({ id: 'facebook', name: 'Facebook' });
+                } else if (card.classList.contains('instagram')) {
+                    selectedNetworks.push({ id: 'instagram', name: 'Instagram' });
+                } else if (card.classList.contains('twitter')) {
+                    selectedNetworks.push({ id: 'twitter', name: 'Twitter' });
+                } else if (card.classList.contains('linkedin')) {
+                    selectedNetworks.push({ id: 'linkedin', name: 'LinkedIn' });
+                }
+            });
+
+            const tabsContainer = document.getElementById('network-tabs');
+            if (!tabsContainer) return;
+
+            tabsContainer.innerHTML = selectedNetworks.map((network, index) => 
+                `<button class="network-tab ${index === 0 ? 'active' : ''}" onclick="switchNetworkTab('${network.id}', this)">${network.name}</button>`
+            ).join('');
+
+            // Show first selected network panel, hide others
+            document.querySelectorAll('.network-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            
+            if (selectedNetworks.length > 0) {
+                const firstPanel = document.getElementById(`panel-${selectedNetworks[0].id}`);
+                if (firstPanel) {
+                    firstPanel.style.display = 'block';
+                }
+            }
         }
 
         // Add placeholder image
@@ -1035,17 +1400,24 @@
 
         // Network tab switching
         function switchNetworkTab(network, tabElement) {
+            // Check if this network is selected
+            const networkCard = document.querySelector(`#screen-setup .network-card.${network}.selected`);
+            if (!networkCard) return; // Don't show if not selected
+
             // Update tabs
             document.querySelectorAll('.network-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             tabElement.classList.add('active');
 
-            // Update panels
+            // Update panels - only show selected networks
             document.querySelectorAll('.network-panel').forEach(panel => {
                 panel.style.display = 'none';
             });
-            document.getElementById(`panel-${network}`).style.display = 'block';
+            const panel = document.getElementById(`panel-${network}`);
+            if (panel) {
+                panel.style.display = 'block';
+            }
         }
 
         // Override toggle
@@ -1064,6 +1436,9 @@
                 const globalText = document.getElementById('global-text').value;
                 input.value = globalText;
                 preview.textContent = globalText;
+                // Update character count
+                const maxLength = network === 'facebook' ? 5000 : network === 'instagram' ? 2200 : network === 'twitter' ? 280 : 3000;
+                updateNetworkCharCount(network, maxLength);
             }
         }
 
@@ -1248,6 +1623,10 @@
 
         // Initialize
         updateCharCount();
+        updateNetworkCharCount('facebook', 5000);
+        updateNetworkCharCount('instagram', 2200);
+        updateNetworkCharCount('twitter', 280);
+        updateNetworkCharCount('linkedin', 3000);
     </script>
 </body>
 </html>
